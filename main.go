@@ -97,7 +97,7 @@ func main() {
 				}
 
 			case time.Time:
-				RunBT(tree)
+				Run(tree)
 
 				win.Fill(image.Rect(0, 0, ScreenWidth, ScreenHeight), color.Black, screen.Src)
 				win.Fill(r, &color.NRGBA{255, 0, 255, 255}, screen.Over)
