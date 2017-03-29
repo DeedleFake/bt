@@ -2,7 +2,7 @@ package main
 
 type Node interface {
 	Reset()
-	Execute(v interface{}) Result
+	Execute() Result
 }
 
 type Result uint
@@ -29,12 +29,12 @@ func (s *sequence) Reset() {
 	}
 }
 
-func (s *sequence) Execute(v interface{}) Result {
+func (s *sequence) Execute() Result {
 	if s.cur >= len(s.c) {
 		return Success
 	}
 
-	switch r := s.c[s.cur].Execute(v); r {
+	switch r := s.c[s.cur].Execute(); r {
 	case Success:
 		s.cur++
 		if s.cur >= len(s.c) {
@@ -63,12 +63,12 @@ func (s *selector) Reset() {
 	}
 }
 
-func (s *selector) Execute(v interface{}) Result {
+func (s *selector) Execute() Result {
 	if s.cur >= len(s.c) {
 		return Failure
 	}
 
-	switch r := s.c[s.cur].Execute(v); r {
+	switch r := s.c[s.cur].Execute(); r {
 	case Failure:
 		s.cur++
 		if s.cur >= len(s.c) {
@@ -81,17 +81,17 @@ func (s *selector) Execute(v interface{}) Result {
 	}
 }
 
-type NodeFunc func(interface{}) Result
+type NodeFunc func() Result
 
 func (nf NodeFunc) Reset() {
 }
 
-func (nf NodeFunc) Execute(v interface{}) Result {
-	return nf(v)
+func (nf NodeFunc) Execute() Result {
+	return nf()
 }
 
-func RunBT(root Node, v interface{}) Result {
-	r := root.Execute(v)
+func RunBT(root Node) Result {
+	r := root.Execute()
 	if r != NotDone {
 		root.Reset()
 	}

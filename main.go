@@ -32,10 +32,8 @@ func genEvents(ctx context.Context, ed screen.EventDeque) {
 	}
 }
 
-func Move(x, y int) NodeFunc {
-	return NodeFunc(func(v interface{}) Result {
-		r := v.(*image.Rectangle)
-
+func Move(r *image.Rectangle, x, y int) Node {
+	return NodeFunc(func() Result {
 		r.Min.X += x
 		r.Max.X += x
 
@@ -83,14 +81,13 @@ func main() {
 		defer win.Release()
 		go genEvents(ctx, win)
 
-		tree := Sequence(
-			Move(Speed, 0),
-			Move(0, Speed),
-			Move(-Speed, 0),
-			Move(0, -Speed),
-		)
-
 		r := image.Rect(10, 10, 110, 60)
+		tree := Sequence(
+			Move(&r, Speed, 0),
+			Move(&r, 0, Speed),
+			Move(&r, -Speed, 0),
+			Move(&r, 0, -Speed),
+		)
 
 		for {
 			switch ev := win.NextEvent().(type) {
@@ -100,7 +97,7 @@ func main() {
 				}
 
 			case time.Time:
-				RunBT(tree, &r)
+				RunBT(tree)
 
 				win.Fill(image.Rect(0, 0, ScreenWidth, ScreenHeight), color.Black, screen.Src)
 				win.Fill(r, &color.NRGBA{255, 0, 255, 255}, screen.Over)
