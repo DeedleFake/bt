@@ -1,4 +1,4 @@
-package main
+package bt
 
 // A Node is a node of a behavior tree.
 type Node interface {
