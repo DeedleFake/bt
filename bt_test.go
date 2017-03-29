@@ -1,8 +1,9 @@
 package bt_test
 
 import (
-	"test/bt"
 	"testing"
+
+	"github.com/DeedleFake/bt"
 )
 
 func NodeTester(out int, r bt.Result) bt.Node {
