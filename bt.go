@@ -47,6 +47,40 @@ func (s *sequence) Execute(v interface{}) Result {
 	}
 }
 
+type selector struct {
+	cur int
+	c   []Node
+}
+
+func Selector(children ...Node) Node {
+	return &selector{c: children}
+}
+
+func (s *selector) Reset() {
+	s.cur = 0
+	for _, c := range s.c {
+		c.Reset()
+	}
+}
+
+func (s *selector) Execute(v interface{}) Result {
+	if s.cur >= len(s.c) {
+		return Failure
+	}
+
+	switch r := s.c[s.cur].Execute(v); r {
+	case Failure:
+		s.cur++
+		if s.cur >= len(s.c) {
+			return Failure
+		}
+		return NotDone
+
+	default:
+		return r
+	}
+}
+
 type NodeFunc func(interface{}) Result
 
 func (nf NodeFunc) Reset() {
